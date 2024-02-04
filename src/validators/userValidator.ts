@@ -1,7 +1,6 @@
 import { validationResult, check } from 'express-validator';
 import { Request } from "express";
 
-
 class UserValidator {
   public validateUser(req: Request) {
     const errors = validationResult(req);

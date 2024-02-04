@@ -1,8 +1,10 @@
 import { executeQuery } from "../config/db"
 import { IUser } from "../types/types"
 import bcrypt from 'bcrypt'
+import jwt from "jsonwebtoken"
 
 class UserService {
+
   salt = 10
   pass_secret = process.env.PASSWORD_SECRET
 
@@ -19,19 +21,30 @@ class UserService {
 
   public async login(user: Omit<IUser, 'id'>) {
     try {
-      const foundUser: IUser | Error = await this.findUserByUsername(user.username);
+      const foundUser = await this.findUserByUsername(user.username) as IUser;
       if (foundUser) {
-        const isMatch = bcrypt.compareSync(user.password, (foundUser as IUser).password);
-        if (isMatch) {
-          return foundUser
+        const isPasswordCorrect = await bcrypt.compare(user.password, foundUser.password);
+
+        if (isPasswordCorrect) {
+
+          const SECRET_KEY = process.env.SECRET_KEY
+          if (!SECRET_KEY) {
+            throw new Error("SECRET_KEY is not defined");
+          }
+          const token = jwt.sign({ _id: foundUser.id?.toString(), name: foundUser.username }, SECRET_KEY, {
+            expiresIn: '2 days',
+          });
+
+          const { password, ...userWithoutPassword } = foundUser;
+          return { ...userWithoutPassword, token };
         } else {
-          throw new Error('Wrong password')
+          throw new Error('Wrong password');
         }
       } else {
-        throw new Error('Username of user is not correct');
+        throw new Error('Username is not correct');
       }
     } catch (error) {
-      return error
+      throw error
     }
   }
 
@@ -50,6 +63,19 @@ class UserService {
       return result[0]
     } catch (error) {
       console.error('Error finding user by username:', error);
+      return error as Error;
+    }
+  }
+
+  public async findUser(id: number): Promise<IUser | Error> {
+    try {
+      const result = await executeQuery<IUser>(
+        'SELECT id, username, email, created_at FROM users WHERE id = $1',
+        [id]
+      );
+      return result[0]
+    } catch (error) {
+      console.error('Error finding user by id:', error);
       return error as Error;
     }
   }

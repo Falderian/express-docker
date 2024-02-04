@@ -29,8 +29,8 @@ class UserController {
 
   public login = async (req: Request, res: Response) => {
     try {
-      await userService.login(req.body);
-      res.status(200).send('Inserted successfully');
+      const isLogined = await userService.login(req.body);
+      res.status(200).send(isLogined);
     } catch (error) {
       return res.status(500).send(getErrorMessage(error));
     }
