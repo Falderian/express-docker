@@ -1,4 +1,7 @@
-import { Pool } from "pg";
+import { Pool, QueryResult } from "pg";
+import { config } from "dotenv";
+
+config();
 
 const pool = new Pool({
   host: process.env.DB_HOST,
@@ -15,4 +18,15 @@ const connectToDB = async () => {
     console.log(err);
   }
 };
+
 connectToDB();
+
+export const executeQuery = async <T>(query: string, params: any[] = []): Promise<T[]> => {
+  const client = await pool.connect();
+  try {
+    const result: QueryResult = await client.query(query, params);
+    return result.rows as T[];
+  } finally {
+    client.release();
+  }
+};

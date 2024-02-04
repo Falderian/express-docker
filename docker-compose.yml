@@ -1,23 +1,25 @@
 version: '3.8'
+
 services:
-  api:
+  api_service:
     container_name: api
     restart: always
     environment:
       - npm_config_cache=/home/node/.npm
+      - PORT=${PORT}
     build: .
     ports:
-      - ${PORT}:${PORT}
+      - "${PORT}:${PORT}"
     depends_on:
-      - db
+      - db_service
     volumes:
-    - .:/usr/src/app
+      - .:/usr/src/app
 
-  db:
+  db_service:
     container_name: postgres
     image: postgres
     ports:
-      - '5433:${DB_PORT}'
+      - '5432:${DB_PORT}'
     volumes:
       - data:/data/db
     environment:
@@ -25,4 +27,4 @@ services:
       - POSTGRES_DB=${DB_NAME}
 
 volumes:
- data: {}
+  data: {}
