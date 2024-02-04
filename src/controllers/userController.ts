@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import userService from "../services/userService";
-import { getErrorMessage } from "../utils/utils";
 import userValidator from "../validators/userValidator";
 
 class UserController {
@@ -23,7 +22,7 @@ class UserController {
       const newUser = await userService.register(req.body);
       res.status(200).send('User with ' + newUser.username + ', ' + newUser.email + ' has been created');
     } catch (error) {
-      return res.status(500).send(getErrorMessage(error));
+      return res.status(500).send(error);
     }
   };
 
@@ -32,7 +31,7 @@ class UserController {
       const isLogined = await userService.login(req.body);
       res.status(200).send(isLogined);
     } catch (error) {
-      return res.status(500).send(getErrorMessage(error));
+      return res.status(500).send(error);
     }
   };
 }
