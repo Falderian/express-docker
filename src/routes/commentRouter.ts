@@ -1,28 +1,28 @@
 import express from 'express';
-import postController from '../controllers/postController';
+import CommentController from '../controllers/commentController';
 import postValidator from '../validators/postValidator';
 
-const postRouter = express.Router();
+const commentRouter = express.Router();
 
-postRouter.post(
+commentRouter.post(
   '/',
   postValidator.titleValidation(),
   postValidator.contentValidation(),
   postValidator.userIdValidation(),
-  postController.createPost
+  CommentController.createComment
 );
 
-postRouter.get('/', postController.getAllPosts);
+commentRouter.get('/', CommentController.getAllComments);
 
-postRouter.get('/:postId', postValidator.validatePostId, postController.getPost);
+commentRouter.get('/:postId', postValidator.validatePostId(), CommentController.getCommentById);
 
-postRouter.put(
+commentRouter.put(
   '/:postId',
   postValidator.validatePostUpdate,
   postValidator.validatePostId,
-  postController.updatePost
+  CommentController.updateComment
 );
 
-postRouter.delete('/:postId', postValidator.validatePostId, postController.deletePost);
+commentRouter.delete('/:postId', postValidator.validatePostId(), CommentController.deleteComment);
 
-export { postRouter };
+export { commentRouter };

@@ -35,4 +35,23 @@ const createPostsTable = async (executeQuery: Function) => {
   }
 };
 
-export { createUsersTable, createPostsTable }
+const createCommentsTable = async (executeQuery: Function) => {
+  try {
+    const result = await executeQuery(`
+      CREATE TABLE IF NOT EXISTS comments (
+        id SERIAL PRIMARY KEY,
+        content VARCHAR(255),
+        user_id INTEGER REFERENCES users(id),
+        post_id INTEGER REFERENCES posts(id),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    console.log('Comments table created (if not exists)');
+  } catch (error) {
+    console.error('Error creating Comments table:', error);
+  }
+};
+
+export { createUsersTable, createPostsTable, createCommentsTable }

@@ -26,7 +26,7 @@ class PostService {
     try {
       const user = await userService.findUser(userId)
       if (user) {
-        const result = (await executeQuery('INSERT INTO posts (title, content, user_id) VALUES ($1, $2, $3) RETURNING *', [title, content, (user as IUser).id]))[0]
+        const result = (await executeQuery('INSERT INTO posts (title, content, user_id) VALUES ($1, $2, $3) RETURNING *', [title, content, userId]))[0]
         return result
       } else {
         throw new Error('User not found')

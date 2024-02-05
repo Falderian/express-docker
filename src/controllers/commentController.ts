@@ -1,4 +1,3 @@
-// commentController.ts
 import { Request, Response } from 'express';
 import commentService from '../services/commentService';
 import commentValidator from '../validators/commentValidator';

@@ -14,15 +14,15 @@ postRouter.post(
 
 postRouter.get('/', postController.getAllPosts);
 
-postRouter.get('/:postId', postValidator.validatePostId, postController.getPost);
+postRouter.get('/:postId', postValidator.validatePostId(), postController.getPost);
 
 postRouter.put(
   '/:postId',
-  postValidator.validatePostUpdate,
-  postValidator.validatePostId,
+  postValidator.validatePostUpdate(),
+  postValidator.validatePostId(),
   postController.updatePost
 );
 
-postRouter.delete('/:postId', postValidator.validatePostId, postController.deletePost);
+postRouter.delete('/:postId', postValidator.validatePostId(), postController.deletePost);
 
 export { postRouter };

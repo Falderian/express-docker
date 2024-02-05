@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from "pg";
 import { config } from "dotenv";
-import { createPostsTable, createUsersTable } from "./dbTablesConfig";
+import { createCommentsTable, createPostsTable, createUsersTable } from "./dbTablesConfig";
 
 config();
 
@@ -34,3 +34,4 @@ export const executeQuery = async <T>(query: string, params: any[] = []): Promis
 
 createUsersTable(executeQuery);
 createPostsTable(executeQuery);
+createCommentsTable(executeQuery);
