@@ -48,12 +48,12 @@ class PostController {
     try {
       const { postId } = req.params;
       const { title, content } = req.body;
-
       const updatedPost = await postService.updatePost(title, content, Number(postId));
 
       if (!updatedPost) {
         res.status(404).json({ message: 'Post not found' });
       }
+      console.log(updatedPost)
 
       res.status(200).json(updatedPost);
     } catch (error) {

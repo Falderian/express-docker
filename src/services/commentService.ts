@@ -1,11 +1,12 @@
 import { executeQuery } from "../config/db";
-import { IUser, IComment } from "../types/types";
+import { IUser, IComment, IPost } from "../types/types";
 import userService from "./userService";
+import PostService from './postService'
 
 class CommentService {
   public getAllComments = async () => {
     try {
-      const result = (await executeQuery('SELECT * FROM comments'))[0];
+      const result = (await executeQuery('SELECT * FROM comments'));
       return result;
     } catch (error) {
       throw new Error((error as Error).message);
@@ -31,6 +32,16 @@ class CommentService {
     try {
       const result = (await executeQuery('SELECT * FROM comments WHERE id = $1', [commentId]))[0];
       return result;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
+  public getCommentsByPostId = async (postId: number): Promise<IComment[]> => {
+    try {
+      const query = 'SELECT * FROM comments WHERE post_id = $1';
+      const result = await executeQuery(query, [postId]);
+      return result as IComment[];
     } catch (error) {
       throw new Error((error as Error).message);
     }
@@ -62,5 +73,22 @@ class CommentService {
     }
   }
 }
+
+const createMultipleComments = async (count: number) => {
+  const posts = (await PostService.getAllPosts());
+  posts.forEach(async post => {
+    try {
+      for (let i = 1; i <= count; i++) {
+        const newComment = await new CommentService().createComment(`Comment ${i} for post ${post.id}`, post.user_id, +post.id);
+        console.log('New comment created');
+      }
+    } catch (error) {
+      console.error(error);
+      throw new Error((error as Error).message);
+    }
+  })
+
+};
+// createMultipleComments(100)
 
 export default new CommentService();

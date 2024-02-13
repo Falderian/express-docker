@@ -1,3 +1,4 @@
+import e from "express"
 import { executeQuery } from "../config/db"
 import { IUser } from "../types/types"
 import bcrypt from 'bcrypt'
@@ -11,11 +12,17 @@ class UserService {
   public async register(user: Omit<IUser, 'id'>) {
     try {
       const hashedPassword = await this.hashPassword(user.password)
-      const result = await executeQuery<IUser>('INSERT INTO users (email, username, password) VALUES ($1, $2, $3) RETURNING *', [user.email, user.username, hashedPassword])
-      const newUser = result
-      return newUser[0]
+      const isUserExists = await this.findUserByUsername(user.username)
+      if (isUserExists) {
+        throw new Error('User with name ' + user.username + ' already exists');
+      } else {
+        const result = await executeQuery<IUser>('INSERT INTO users (email, username, password) VALUES ($1, $2, $3) RETURNING *', [user.email, user.username, hashedPassword])
+        const newUser = result[0]
+        return newUser;
+      }
     } catch (error) {
-      throw new Error((error as Error).message)
+      console.error('Error registering user:', error);
+      throw error as Error;
     }
   }
 
@@ -41,10 +48,11 @@ class UserService {
           throw new Error('Wrong password');
         }
       } else {
-        throw new Error('Username is not correct');
+        throw Error('User not found')
       }
     } catch (error) {
-      throw error
+      console.error('Error loging user:', error);
+      throw error as Error;
     }
   }
 
@@ -60,7 +68,7 @@ class UserService {
   public async findUserByUsername(username: string): Promise<IUser | Error> {
     try {
       const result = await executeQuery<IUser>('SELECT * FROM users WHERE username = $1', [username])
-      return result[0]
+      return result[0];
     } catch (error) {
       console.error('Error finding user by username:', error);
       return error as Error;

@@ -29,6 +29,17 @@ class CommentController {
     }
   }
 
+  public getCommentsByPostId = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const postId: number = parseInt(req.params.postId, 10);
+      const comments = await commentService.getCommentsByPostId(postId);
+      res.status(200).json(comments);
+    } catch (error) {
+      console.error('Error in getCommentsByPostId:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
+
   public getCommentById = async (req: Request, res: Response) => {
     try {
       const { commentId } = req.params;

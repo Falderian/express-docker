@@ -1,14 +1,15 @@
 import { executeQuery } from "../config/db"
-import { IUser } from "../types/types";
+import { IPost, } from "../types/types";
 import userService from "./userService";
 
 class PostService {
-  public getAllPosts = async () => {
+  public async getAllPosts(): Promise<IPost[]> {
     try {
-      const result = (await executeQuery('SELECT * FROM posts'))[0];
-      return result;
+      const query = "SELECT * FROM posts";
+      const result = await executeQuery(query);
+      return result as IPost[]; // Assuming result is an array of posts
     } catch (error) {
-      throw new Error((error as Error).message)
+      throw new Error((error as Error).message);
     }
   }
 
@@ -72,5 +73,21 @@ class PostService {
     }
   }
 }
+
+// const createMultiplePosts = async (numPosts: number) => {
+//   try {
+//     for (let i = 0; i < numPosts; i++) {
+//       const title = `Post ${i + 1}`;
+//       const content = `Content for post ${i + 1}`;
+//       const userId = 1;
+//       const newPost = await (new PostService()).createPost(title, content, userId);
+//       console.log(`Created post with ID: ${title}`);
+//     }
+//   } catch (error) {
+//     console.error("Error creating posts:", error);
+//   }
+// };
+
+// createMultiplePosts(20)
 
 export default new PostService()

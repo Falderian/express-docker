@@ -22,7 +22,8 @@ class UserController {
       const newUser = await userService.register(req.body);
       res.status(200).send('User with ' + newUser.username + ', ' + newUser.email + ' has been created');
     } catch (error) {
-      return res.status(500).send(error);
+      const { message } = error as Error;
+      return res.status(500).send({ message });
     }
   };
 
@@ -31,7 +32,8 @@ class UserController {
       const isLogined = await userService.login(req.body);
       res.status(200).send(isLogined);
     } catch (error) {
-      return res.status(500).send(error);
+      const { message } = error as Error;
+      return res.status(500).send({ message });
     }
   };
 }

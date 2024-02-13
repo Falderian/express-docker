@@ -13,8 +13,7 @@ commentRouter.post(
 );
 
 commentRouter.get('/', CommentController.getAllComments);
-
-commentRouter.get('/:postId', postValidator.validatePostId(), CommentController.getCommentById);
+commentRouter.get('/:postId', postValidator.validatePostId(), CommentController.getCommentsByPostId);
 
 commentRouter.put(
   '/:postId',
